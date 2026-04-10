@@ -25,15 +25,39 @@ async def upload_file(
         # Read file content
         file_bytes = await file.read()
         
-        # Calculate perceptual hash for plagiarism detection
+        # Calculate perceptual hash for plagiarism detection (manual dhash to save space)
         try:
             from PIL import Image
             import io
-            import imagehash
+            
             img = Image.open(io.BytesIO(file_bytes))
-            p_hash = str(imagehash.phash(img))
+            
+            # Simple dhash implementation
+            # 1. Resize to 9x8, grayscale
+            hash_size = 8
+            img_small = img.convert('L').resize((hash_size + 1, hash_size), Image.Resampling.LANCZOS)
+            pixels = list(img_small.getdata())
+            
+            # 2. Compare adjacent pixels
+            diff = []
+            for row in range(hash_size):
+                for col in range(hash_size):
+                    pixel_left = pixels[row * (hash_size + 1) + col]
+                    pixel_right = pixels[row * (hash_size + 1) + col + 1]
+                    diff.append(pixel_left > pixel_right)
+            
+            # 3. Convert bits to hex
+            decimal_value = 0
+            hex_parts = []
+            for i, bit in enumerate(diff):
+                if bit:
+                    decimal_value += 2**(i % 8)
+                if (i % 8) == 7:
+                    hex_parts.append(hex(decimal_value)[2:].rjust(2, '0'))
+                    decimal_value = 0
+            p_hash = "".join(hex_parts)
+            
         except Exception as e:
-            # If hashing fails (not an image, corrupt, etc.), we gracefully ignore or throw 400
             print(f"Warning: Failed to hash image - {str(e)}")
             raise HTTPException(status_code=400, detail="Invalid image file format")
             

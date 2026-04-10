@@ -13,6 +13,5 @@ dependencies = [
     "python-jose[cryptography]",
     "httpx",
     "python-multipart",
-    "Pillow",
-    "ImageHash"
+    "Pillow"
 ]
