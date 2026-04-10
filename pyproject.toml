@@ -1,0 +1,15 @@
+[project]
+name = "anti-aarsls"
+version = "0.1.0"
+description = "AARSLS Backend"
+requires-python = ">=3.9,<3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "supabase",
+    "python-dotenv",
+    "pydantic",
+    "python-jose[cryptography]",
+    "httpx",
+    "python-multipart"
+]
