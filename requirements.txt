@@ -3,6 +3,7 @@ uvicorn[standard]
 supabase
 python-dotenv
 pydantic==1.10.13
+email-validator
 python-jose[cryptography]
 httpx
 python-multipart

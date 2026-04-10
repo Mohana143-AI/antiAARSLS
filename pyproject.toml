@@ -9,6 +9,7 @@ dependencies = [
     "supabase",
     "python-dotenv",
     "pydantic",
+    "email-validator",
     "python-jose[cryptography]",
     "httpx",
     "python-multipart"
