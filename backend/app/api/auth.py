@@ -1,0 +1,108 @@
+"""
+Authentication & authorisation utilities.
+"""
+from fastapi import APIRouter, HTTPException, Depends, Header
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+from app.db import get_supabase, get_supabase_admin
+
+router = APIRouter()
+
+
+# ── Pydantic models ──────────────────────────────────────
+class SignUpRequest(BaseModel):
+    email: EmailStr
+    password: str
+    full_name: str
+    role: str = "student"
+    department: Optional[str] = None
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+# ── Dependency: get current user from access token ───────
+async def get_current_user(authorization: str = Header(...)):
+    token = authorization.replace("Bearer ", "")
+    try:
+        user_resp = get_supabase().auth.get_user(token)
+        user = user_resp.user
+        if not user:
+            raise HTTPException(401, "Invalid token")
+        # Fetch profile
+        profile = (
+            get_supabase_admin().table("profiles")
+            .select("*")
+            .eq("id", str(user.id))
+            .single()
+            .execute()
+        )
+        return profile.data
+    except Exception as e:
+        raise HTTPException(401, f"Authentication failed: {e}")
+
+
+def require_role(*roles):
+    """Dependency factory that enforces role-based access."""
+    async def role_checker(user=Depends(get_current_user)):
+        if user["role"] not in roles:
+            raise HTTPException(403, "Insufficient permissions")
+        return user
+    return role_checker
+
+
+# ── Routes ───────────────────────────────────────────────
+@router.post("/signup")
+async def signup(body: SignUpRequest):
+    try:
+        auth_resp = get_supabase().auth.sign_up({
+            "email": body.email,
+            "password": body.password,
+        })
+        user = auth_resp.user
+        if not user:
+            raise HTTPException(400, "Signup failed")
+
+        # Create profile
+        get_supabase_admin().table("profiles").insert({
+            "id": str(user.id),
+            "email": body.email,
+            "full_name": body.full_name,
+            "role": body.role,
+            "department": body.department,
+        }).execute()
+
+        # Initialise reputation score row
+        get_supabase_admin().table("reputation_scores").insert({
+            "student_id": str(user.id),
+        }).execute()
+
+        return {"message": "Account created", "user_id": str(user.id)}
+    except Exception as e:
+        raise HTTPException(400, str(e))
+
+
+@router.post("/login")
+async def login(body: LoginRequest):
+    try:
+        resp = get_supabase().auth.sign_in_with_password({
+            "email": body.email,
+            "password": body.password,
+        })
+        return {
+            "access_token": resp.session.access_token,
+            "refresh_token": resp.session.refresh_token,
+            "user": {
+                "id": str(resp.user.id),
+                "email": resp.user.email,
+            },
+        }
+    except Exception as e:
+        raise HTTPException(401, str(e))
+
+
+@router.get("/me")
+async def me(user=Depends(get_current_user)):
+    return user
