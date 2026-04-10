@@ -7,3 +7,5 @@ email-validator
 python-jose[cryptography]
 httpx
 python-multipart
+Pillow
+ImageHash

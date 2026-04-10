@@ -12,5 +12,7 @@ dependencies = [
     "email-validator",
     "python-jose[cryptography]",
     "httpx",
-    "python-multipart"
+    "python-multipart",
+    "Pillow",
+    "ImageHash"
 ]
