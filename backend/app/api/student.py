@@ -66,6 +66,7 @@ async def add_skill(body: SkillCreate, user=Depends(require_role("student"))):
     risk_level = "low"
     risk_details = None
     if body.image_hash:
+        print(f"DEBUG: Processing Skill upload with hash: {body.image_hash}")
         # Check all existing skills for similarity
         existing_res = get_supabase_admin().table("skills").select("id, image_hash").execute()
         for item in existing_res.data:
@@ -74,8 +75,12 @@ async def add_skill(body: SkillCreate, user=Depends(require_role("student"))):
             dist = calculate_hamming_distance(body.image_hash, item["image_hash"])
             level, detail = get_risk_level(dist)
             
+            print(f"DEBUG: Comparing Skill {body.image_hash} to {item['image_hash']}. Distance: {dist}")
+            
             if dist == 0:
+                print(f"DEBUG: BLOCKED - Exact Plagiarism detected for Skill!")
                 raise HTTPException(400, "PLAGIARISM DETECTED: This proof image has already been submitted!")
+
             
             if level in ["high", "medium"]:
                 risk_level = level
@@ -132,6 +137,7 @@ async def add_project(body: ProjectCreate, user=Depends(require_role("student"))
     risk_level = "low"
     risk_details = None
     if body.image_hash:
+        print(f"DEBUG: Processing Project upload with hash: {body.image_hash}")
         # Check all existing projects for similarity
         existing_res = get_supabase_admin().table("projects").select("id, image_hash").execute()
         for item in existing_res.data:
@@ -140,8 +146,12 @@ async def add_project(body: ProjectCreate, user=Depends(require_role("student"))
             dist = calculate_hamming_distance(body.image_hash, item["image_hash"])
             level, detail = get_risk_level(dist)
             
+            print(f"DEBUG: Comparing Project {body.image_hash} to {item['image_hash']}. Distance: {dist}")
+            
             if dist == 0:
+                print(f"DEBUG: BLOCKED - Exact Plagiarism detected for Project!")
                 raise HTTPException(400, "PLAGIARISM DETECTED: This proof image has already been submitted for another project!")
+
             
             if level in ["high", "medium"]:
                 risk_level = level
@@ -191,6 +201,7 @@ async def add_certification(body: CertificationCreate, user=Depends(require_role
     risk_level = "low"
     risk_details = None
     if body.image_hash:
+        print(f"DEBUG: Processing Certification upload with hash: {body.image_hash}")
         # Check all existing certifications for similarity
         existing_res = get_supabase_admin().table("certifications").select("id, image_hash").execute()
         for item in existing_res.data:
@@ -199,8 +210,12 @@ async def add_certification(body: CertificationCreate, user=Depends(require_role
             dist = calculate_hamming_distance(body.image_hash, item["image_hash"])
             level, detail = get_risk_level(dist)
             
+            print(f"DEBUG: Comparing Cert {body.image_hash} to {item['image_hash']}. Distance: {dist}")
+            
             if dist == 0:
+                print(f"DEBUG: BLOCKED - Exact Plagiarism detected for Cert!")
                 raise HTTPException(400, "PLAGIARISM DETECTED: This certification image is already in our system!")
+
             
             if level in ["high", "medium"]:
                 risk_level = level
