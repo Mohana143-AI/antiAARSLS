@@ -85,6 +85,14 @@ async def add_skill(body: SkillCreate, user=Depends(require_role("student"))):
             if level in ["high", "medium"]:
                 risk_level = level
                 risk_details = {"match_id": item["id"], "distance": dist, "reason": detail}
+                
+                # Penalize or track tampering
+                if level == "high":
+                    get_supabase_admin().rpc("increment_reputation", {
+                        "uid": user["id"],
+                        "points": 0, # Don't add points
+                        "field": "matches_detected"
+                    }).execute()
                 break
 
 
@@ -271,7 +279,14 @@ async def validate_peer_skill(body: ValidationCreate, user=Depends(require_role(
         raise HTTPException(400, "Cannot validate your own skills")
     if body.rating < 1 or body.rating > 5:
         raise HTTPException(400, "Rating must be 1-5")
-    try:
+        # Fetch validator's trust status
+        validator_profile = get_supabase_admin().table("profiles").select("is_trusted").eq("id", user["id"]).single().execute()
+        is_trusted = validator_profile.data.get("is_trusted", False)
+        
+        # Calculate Base Reputation Reward (e.g., 10 points per validation)
+        # If trusted, give 15 points (1.5x multiplier)
+        points = 15 if is_trusted else 10
+
         res = get_supabase_admin().table("validations").insert({
             "skill_id": body.skill_id,
             "validator_id": user["id"],
@@ -279,7 +294,23 @@ async def validate_peer_skill(body: ValidationCreate, user=Depends(require_role(
             "rating": body.rating,
             "comment": body.comment,
         }).execute()
-        return res.data[0]
+        
+        # Update Recipient's Reputation Score
+        get_supabase_admin().rpc("increment_reputation", {
+            "uid": body.student_id,
+            "points": points,
+            "field": "validation_score"
+        }).execute()
+
+        # Check if the VALIDATOR themselves should now be promoted to Trusted Peer
+        # (Based on their total score and clean record)
+        try:
+            score_data = get_supabase_admin().table("reputation_scores").select("total_score, matches_detected").eq("student_id", user["id"]).single().execute()
+            if score_data.data["total_score"] >= 500 and score_data.data["matches_detected"] == 0:
+                get_supabase_admin().table("profiles").update({"is_trusted": True}).eq("id", user["id"]).execute()
+        except: pass
+
+        return {**res.data[0], "points_awarded": points, "is_trusted_validation": is_trusted}
     except Exception as e:
         if "duplicate" in str(e).lower() or "unique" in str(e).lower():
             raise HTTPException(409, "You already validated this skill")

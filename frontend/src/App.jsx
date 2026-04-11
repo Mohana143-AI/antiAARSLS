@@ -14,6 +14,9 @@ import RecruiterDashboard from "./pages/RecruiterDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AuditLogsPage from "./pages/AuditLogsPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
+import VerificationPage from "./pages/VerificationPage";
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
@@ -41,6 +44,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/verify/:id" element={<VerificationPage />} />
 
       {/* Student Pages */}
       <Route path="/dashboard" element={
@@ -54,6 +58,16 @@ function AppRoutes() {
         <Route path="certifications" element={<CertificationsPage />} />
         <Route path="leaderboard" element={<LeaderboardPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
+      </Route>
+
+      {/* Shared Profile/Settings (Global under DashboardLayout) */}
+      <Route element={
+        <ProtectedRoute>
+          <DashboardLayout />
+        </ProtectedRoute>
+      }>
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Route>
 
       {/* Faculty Pages */}

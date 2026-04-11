@@ -23,6 +23,11 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class ProfileUpdate(BaseModel):
+    full_name: Optional[str] = None
+    department: Optional[str] = None
+
+
 # ── Dependency: get current user from access token ───────
 async def get_current_user(authorization: str = Header(...)):
     token = authorization.replace("Bearer ", "")
@@ -106,3 +111,45 @@ async def login(body: LoginRequest):
 @router.get("/me")
 async def me(user=Depends(get_current_user)):
     return user
+
+
+@router.put("/me")
+async def update_me(body: ProfileUpdate, user=Depends(get_current_user)):
+    """Update current user's profile."""
+    try:
+        update_data = {}
+        if body.full_name is not None:
+            update_data["full_name"] = body.full_name
+        if body.department is not None:
+            update_data["department"] = body.department
+            
+        if not update_data:
+            return user
+            
+        res = get_supabase_admin().table("profiles").update(update_data).eq("id", user["id"]).execute()
+        
+        if len(res.data) == 0:
+            raise HTTPException(404, "Profile not found")
+            
+        return res.data[0]
+    except Exception as e:
+        if isinstance(e, HTTPException): raise e
+        raise HTTPException(400, str(e))
+
+
+@router.get("/verify/{id}")
+async def public_verify(id: str):
+    """Publicly verify a student's profile via QR code."""
+    try:
+        profile = (
+            get_supabase_admin().table("profiles")
+            .select("full_name, department, email, role, reputation_scores(total_score, matches_detected)")
+            .eq("id", id)
+            .single()
+            .execute()
+        )
+        if not profile.data:
+            raise HTTPException(404, "Profile not found")
+        return profile.data
+    except Exception as e:
+        raise HTTPException(404, "Invalid verification ID")

@@ -9,19 +9,27 @@ const navConfigs = {
     { to: "/dashboard/certifications", icon: "📜", label: "Certifications" },
     { to: "/dashboard/leaderboard", icon: "🏆", label: "Leaderboard" },
     { to: "/dashboard/notifications", icon: "🔔", label: "Notifications" },
+    { to: "/profile", icon: "👤", label: "Profile" },
+    { to: "/settings", icon: "⚙️", label: "Settings" },
   ],
   faculty: [
     { to: "/faculty", icon: "📊", label: "Dashboard" },
     { to: "/faculty/certifications", icon: "✅", label: "Cert Approvals" },
     { to: "/faculty/students", icon: "👥", label: "Students" },
+    { to: "/profile", icon: "👤", label: "Profile" },
+    { to: "/settings", icon: "⚙️", label: "Settings" },
   ],
   recruiter: [
     { to: "/recruiter", icon: "🔍", label: "Search" },
+    { to: "/profile", icon: "👤", label: "Profile" },
+    { to: "/settings", icon: "⚙️", label: "Settings" },
   ],
   admin: [
     { to: "/admin", icon: "📊", label: "Dashboard" },
     { to: "/admin/users", icon: "👥", label: "Users" },
     { to: "/admin/audit", icon: "📋", label: "Audit Logs" },
+    { to: "/profile", icon: "👤", label: "Profile" },
+    { to: "/settings", icon: "⚙️", label: "Settings" },
   ],
 };
 

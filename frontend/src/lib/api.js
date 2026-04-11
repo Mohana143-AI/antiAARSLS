@@ -47,6 +47,8 @@ export const authAPI = {
   signup: (data) => request("/auth/signup", { method: "POST", body: JSON.stringify(data) }),
   login: (data) => request("/auth/login", { method: "POST", body: JSON.stringify(data) }),
   me: () => request("/auth/me"),
+  updateMe: (data) => request("/auth/me", { method: "PUT", body: JSON.stringify(data) }),
+  publicVerify: (id) => request(`/auth/verify/${id}`),
 };
 
 // Student
