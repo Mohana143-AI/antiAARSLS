@@ -141,15 +141,31 @@ async def update_me(body: ProfileUpdate, user=Depends(get_current_user)):
 async def public_verify(id: str):
     """Publicly verify a student's profile via QR code."""
     try:
+        # Fetch profile
         profile = (
             get_supabase_admin().table("profiles")
-            .select("full_name, department, email, role, reputation_scores(total_score, matches_detected)")
+            .select("full_name, department, email, role, is_trusted")
             .eq("id", id)
             .single()
             .execute()
         )
         if not profile.data:
             raise HTTPException(404, "Profile not found")
-        return profile.data
+
+        # Fetch reputation score separately for 100% reliability
+        reputation = (
+            get_supabase_admin().table("reputation_scores")
+            .select("total_score, matches_detected")
+            .eq("student_id", id)
+            .single()
+            .execute()
+        )
+        
+        # Combine data
+        return {
+            **profile.data,
+            "reputation_scores": [reputation.data] if reputation.data else []
+        }
     except Exception as e:
+        print(f"DEBUG Verification Error: {e}")
         raise HTTPException(404, "Invalid verification ID")
