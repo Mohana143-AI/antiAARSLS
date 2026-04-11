@@ -82,6 +82,7 @@ export default function FacultyDashboard() {
               <th>Student</th>
               <th>Certificate</th>
               <th>Issuer</th>
+              <th>Risk Level</th>
               <th>Credential</th>
               <th>Actions</th>
             </tr>
@@ -95,6 +96,38 @@ export default function FacultyDashboard() {
                 </td>
                 <td style={{ fontWeight: 600 }}>{c.name}</td>
                 <td>{c.issuer}</td>
+                <td>
+                  <div style={{ position: "relative", display: "inline-block" }}>
+                    <span className={`badge ${
+                      c.risk_level === "high" ? "badge-danger" : 
+                      c.risk_level === "medium" ? "badge-warning" : "badge-success"
+                    }`}>
+                      {c.risk_level === "high" ? "⚠️ High Risk" : 
+                       c.risk_level === "medium" ? "🔍 Medium Risk" : "✅ Low Risk"}
+                    </span>
+                    {c.risk_details && (
+                      <div className="risk-tooltip" style={{
+                        position: "absolute",
+                        bottom: "100%",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        background: "var(--bg-card)",
+                        border: "1px solid var(--border)",
+                        padding: "8px 12px",
+                        borderRadius: 8,
+                        fontSize: "0.7rem",
+                        width: 200,
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        zIndex: 10,
+                        marginBottom: 8,
+                        pointerEvents: "none"
+                      }}>
+                        <strong>Details:</strong><br />
+                        {c.risk_details.reason}
+                      </div>
+                    )}
+                  </div>
+                </td>
                 <td>
                   <div style={{ display: "flex", gap: 6 }}>
                     {c.credential_url ? <a href={c.credential_url} target="_blank" rel="noopener">🔗 View</a> : "—"}

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from app.db import get_supabase_admin
 from app.api.auth import get_current_user, require_role
+from app.utils import calculate_hamming_distance, get_risk_level
 
 router = APIRouter()
 
@@ -61,11 +62,26 @@ async def add_skill(body: SkillCreate, user=Depends(require_role("student"))):
     if body.proficiency_level < 1 or body.proficiency_level > 5:
         raise HTTPException(400, "Proficiency level must be 1-5")
         
-    # ANTI-PLAGIARISM CHECK
+    # ANTI-PLAGIARISM & TAMPER CHECK
+    risk_level = "low"
+    risk_details = None
     if body.image_hash:
-        existing = get_supabase_admin().table("skills").select("id").eq("image_hash", body.image_hash).execute()
-        if existing.data:
-            raise HTTPException(400, "PLAGIARISM DETECTED: This proof image has already been submitted!")
+        # Check all existing skills for similarity
+        existing_res = get_supabase_admin().table("skills").select("id, image_hash").execute()
+        for item in existing_res.data:
+            if not item.get("image_hash"): continue
+            
+            dist = calculate_hamming_distance(body.image_hash, item["image_hash"])
+            level, detail = get_risk_level(dist)
+            
+            if dist == 0:
+                raise HTTPException(400, "PLAGIARISM DETECTED: This proof image has already been submitted!")
+            
+            if level in ["high", "medium"]:
+                risk_level = level
+                risk_details = {"match_id": item["id"], "distance": dist, "reason": detail}
+                break
+
 
     try:
         res = get_supabase_admin().table("skills").insert({
@@ -75,6 +91,8 @@ async def add_skill(body: SkillCreate, user=Depends(require_role("student"))):
             "proficiency_level": body.proficiency_level,
             "proof_url": body.proof_url,
             "image_hash": body.image_hash,
+            "risk_level": risk_level,
+            "risk_details": risk_details,
         }).execute()
         return res.data[0]
     except Exception as e:
@@ -110,11 +128,26 @@ async def get_my_projects(user=Depends(require_role("student"))):
 
 @router.post("/projects")
 async def add_project(body: ProjectCreate, user=Depends(require_role("student"))):
-    # ANTI-PLAGIARISM CHECK
+    # ANTI-PLAGIARISM & TAMPER CHECK
+    risk_level = "low"
+    risk_details = None
     if body.image_hash:
-        existing = get_supabase_admin().table("projects").select("id").eq("image_hash", body.image_hash).execute()
-        if existing.data:
-            raise HTTPException(400, "PLAGIARISM DETECTED: This proof image has already been submitted for another project!")
+        # Check all existing projects for similarity
+        existing_res = get_supabase_admin().table("projects").select("id, image_hash").execute()
+        for item in existing_res.data:
+            if not item.get("image_hash"): continue
+            
+            dist = calculate_hamming_distance(body.image_hash, item["image_hash"])
+            level, detail = get_risk_level(dist)
+            
+            if dist == 0:
+                raise HTTPException(400, "PLAGIARISM DETECTED: This proof image has already been submitted for another project!")
+            
+            if level in ["high", "medium"]:
+                risk_level = level
+                risk_details = {"match_id": item["id"], "distance": dist, "reason": detail}
+                break
+
 
     try:
         res = get_supabase_admin().table("projects").insert({
@@ -129,6 +162,8 @@ async def add_project(body: ProjectCreate, user=Depends(require_role("student"))
             "end_date": body.end_date,
             "proof_url": body.proof_url,
             "image_hash": body.image_hash,
+            "risk_level": risk_level,
+            "risk_details": risk_details,
         }).execute()
         return res.data[0]
     except Exception as e:
@@ -152,11 +187,26 @@ async def get_my_certs(user=Depends(require_role("student"))):
 
 @router.post("/certifications")
 async def add_certification(body: CertificationCreate, user=Depends(require_role("student"))):
-    # ANTI-PLAGIARISM CHECK
+    # ANTI-PLAGIARISM & TAMPER CHECK
+    risk_level = "low"
+    risk_details = None
     if body.image_hash:
-        existing = get_supabase_admin().table("certifications").select("id").eq("image_hash", body.image_hash).execute()
-        if existing.data:
-            raise HTTPException(400, "PLAGIARISM DETECTED: This certification image is already in our system!")
+        # Check all existing certifications for similarity
+        existing_res = get_supabase_admin().table("certifications").select("id, image_hash").execute()
+        for item in existing_res.data:
+            if not item.get("image_hash"): continue
+            
+            dist = calculate_hamming_distance(body.image_hash, item["image_hash"])
+            level, detail = get_risk_level(dist)
+            
+            if dist == 0:
+                raise HTTPException(400, "PLAGIARISM DETECTED: This certification image is already in our system!")
+            
+            if level in ["high", "medium"]:
+                risk_level = level
+                risk_details = {"match_id": item["id"], "distance": dist, "reason": detail}
+                break
+
 
     try:
         res = get_supabase_admin().table("certifications").insert({
@@ -168,6 +218,8 @@ async def add_certification(body: CertificationCreate, user=Depends(require_role
             "credential_url": body.credential_url,
             "proof_url": body.proof_url,
             "image_hash": body.image_hash,
+            "risk_level": risk_level,
+            "risk_details": risk_details,
             "verification_status": "pending",
         }).execute()
         return res.data[0]

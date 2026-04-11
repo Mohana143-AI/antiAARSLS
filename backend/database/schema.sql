@@ -26,6 +26,8 @@ CREATE TABLE skills (
     proficiency_level INT NOT NULL CHECK (proficiency_level BETWEEN 1 AND 5),
     proof_url TEXT,
     image_hash TEXT,
+    risk_level TEXT DEFAULT 'low' CHECK (risk_level IN ('low', 'medium', 'high')),
+    risk_details JSONB,
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now(),
     UNIQUE (student_id, name)  -- prevent duplicate skills per student
@@ -45,6 +47,8 @@ CREATE TABLE projects (
     end_date DATE,
     proof_url TEXT,
     image_hash TEXT,
+    risk_level TEXT DEFAULT 'low' CHECK (risk_level IN ('low', 'medium', 'high')),
+    risk_details JSONB,
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now(),
     UNIQUE (student_id, title)  -- prevent duplicate projects per student
@@ -61,6 +65,8 @@ CREATE TABLE certifications (
     credential_url TEXT,
     proof_url TEXT,
     image_hash TEXT,
+    risk_level TEXT DEFAULT 'low' CHECK (risk_level IN ('low', 'medium', 'high')),
+    risk_details JSONB,
     verification_status TEXT NOT NULL DEFAULT 'pending'
         CHECK (verification_status IN ('pending', 'approved', 'rejected')),
     verified_by UUID REFERENCES profiles(id),
