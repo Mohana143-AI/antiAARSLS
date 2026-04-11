@@ -279,6 +279,7 @@ async def validate_peer_skill(body: ValidationCreate, user=Depends(require_role(
         raise HTTPException(400, "Cannot validate your own skills")
     if body.rating < 1 or body.rating > 5:
         raise HTTPException(400, "Rating must be 1-5")
+    try:
         # Fetch validator's trust status
         validator_profile = get_supabase_admin().table("profiles").select("is_trusted").eq("id", user["id"]).single().execute()
         is_trusted = validator_profile.data.get("is_trusted", False)
