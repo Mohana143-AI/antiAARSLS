@@ -46,6 +46,7 @@ export default function VerificationPage() {
   }
 
   const reputation = data.reputation_scores?.[0] || { total_score: 0, matches_detected: 0 };
+  const hasPlagiarism = reputation.matches_detected > 0;
 
   return (
     <div className="login-page" style={{ padding: 20 }}>
@@ -63,12 +64,13 @@ export default function VerificationPage() {
           </div>
           <div style={{ 
             position: "absolute", bottom: 0, right: "calc(50% - 40px)", 
-            background: "var(--success)", color: "white", 
+            background: hasPlagiarism ? "var(--danger)" : "var(--success)", 
+            color: "white", 
             borderRadius: "50%", width: 24, height: 24, 
             display: "flex", alignItems: "center", justifyContent: "center", 
             fontSize: "0.8rem", border: "2px solid var(--bg-card)"
           }}>
-            ✓
+            {hasPlagiarism ? "!" : "✓"}
           </div>
         </div>
 
@@ -78,9 +80,15 @@ export default function VerificationPage() {
         </h1>
         <p style={{ color: "var(--text-secondary)", marginBottom: 24 }}>{data.department || "Independent Professional"}</p>
 
-        <div className="badge badge-approved" style={{ padding: "8px 16px", fontSize: "0.9rem", marginBottom: 32 }}>
-          ✅ Verified Aura Profile
-        </div>
+        {hasPlagiarism ? (
+          <div className="badge badge-rejected" style={{ padding: "8px 16px", fontSize: "0.9rem", marginBottom: 32 }}>
+            ⚠️ Integrity Warning - Plagiarism Found
+          </div>
+        ) : (
+          <div className="badge badge-approved" style={{ padding: "8px 16px", fontSize: "0.9rem", marginBottom: 32 }}>
+            ✅ Verified Aura Profile
+          </div>
+        )}
 
         <div className="grid-2" style={{ marginBottom: 32 }}>
           <div style={{ textAlign: "center", borderRight: "1px solid var(--border)" }}>
@@ -88,7 +96,7 @@ export default function VerificationPage() {
             <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Reputation Score</p>
           </div>
           <div style={{ textAlign: "center" }}>
-            <p style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--success)" }}>0</p>
+            <p style={{ fontSize: "1.5rem", fontWeight: 800, color: hasPlagiarism ? "var(--danger)" : "var(--success)" }}>{reputation.matches_detected}</p>
             <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Plagiarism Cases</p>
           </div>
         </div>

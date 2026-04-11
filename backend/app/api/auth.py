@@ -143,7 +143,7 @@ async def public_verify(id: str):
     try:
         profile = (
             get_supabase_admin().table("profiles")
-            .select("full_name, department, email, role")
+            .select("full_name, department, email, role, reputation_scores(total_score, matches_detected)")
             .eq("id", id)
             .single()
             .execute()
