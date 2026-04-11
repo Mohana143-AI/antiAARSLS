@@ -28,9 +28,14 @@ const navConfigs = {
 export default function DashboardLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   // If there's no user, the ProtectedRoute wrapper handles the redirect.
-  // We can safely render layout elements or a loading state.
   if (!user) return null;
 
   const navItems = navConfigs[user.role] || navConfigs.student;
@@ -40,10 +45,16 @@ export default function DashboardLayout() {
     navigate("/login");
   };
 
+  const toggleTheme = () => {
+    setTheme(prev => (prev === "dark" ? "light" : "dark"));
+  };
+
   return (
     <div className="dashboard-layout">
       <aside className="sidebar">
-        <div className="logo">⚡ AARSLS</div>
+        <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '1.5rem' }}>✨</span> Aura Ledger
+        </div>
         <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", padding: "0 8px", marginBottom: 8 }}>
           {user.full_name}
           <span className="badge badge-accent" style={{ marginLeft: 8 }}>{user.role}</span>
@@ -58,11 +69,17 @@ export default function DashboardLayout() {
           ))}
         </nav>
 
-        <button className="btn btn-secondary" onClick={handleLogout}
-          style={{ marginTop: "auto", width: "100%" }}>
-          🚪 Sign Out
-        </button>
+        <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
+          <button className="nav-item" onClick={toggleTheme} style={{ background: "none", border: "none", width: "100%", justifyContent: "flex-start" }}>
+            <span>{theme === "dark" ? "☀️" : "🌙"}</span> {theme === "dark" ? "Light Mode" : "Dark Mode"}
+          </button>
+          
+          <button className="btn btn-secondary" onClick={handleLogout} style={{ width: "100%" }}>
+            🚪 Sign Out
+          </button>
+        </div>
       </aside>
+
 
       <main className="main-content">
         <Outlet />

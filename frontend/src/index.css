@@ -4,18 +4,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* ── Palette ─────────────────────────────────── */
-  --bg-primary:     hsl(228, 25%, 8%);
-  --bg-secondary:   hsl(228, 22%, 12%);
-  --bg-card:        hsl(228, 20%, 14%);
-  --bg-card-hover:  hsl(228, 20%, 18%);
-  --bg-input:       hsl(228, 20%, 10%);
-  --border:         hsl(228, 15%, 22%);
-  --border-light:   hsl(228, 15%, 28%);
+  /* ── Palette (Soft Dark - Default) ───────────────── */
+  --bg-primary:     hsl(228, 15%, 10%); /* Softened from 8% */
+  --bg-secondary:   hsl(228, 12%, 14%);
+  --bg-card:        hsl(228, 12%, 18%);
+  --bg-card-hover:  hsl(228, 12%, 22%);
+  --bg-input:       hsl(228, 12%, 12%);
+  --border:         hsl(228, 10%, 26%);
+  --border-light:   hsl(228, 10%, 32%);
 
   --text-primary:   hsl(0, 0%, 96%);
-  --text-secondary: hsl(228, 10%, 65%);
-  --text-muted:     hsl(228, 10%, 45%);
+  --text-secondary: hsl(228, 12%, 75%);
+  --text-muted:     hsl(228, 10%, 55%);
 
   --accent:         hsl(250, 90%, 65%);
   --accent-light:   hsl(250, 90%, 75%);
@@ -32,8 +32,8 @@
   --info-bg:        hsl(200, 85%, 55%, 0.12);
 
   /* ── Glass ───────────────────────────────────── */
-  --glass-bg:       hsla(228, 20%, 14%, 0.65);
-  --glass-border:   hsla(228, 15%, 30%, 0.35);
+  --glass-bg:       hsla(228, 12%, 18%, 0.65);
+  --glass-border:   hsla(228, 10%, 35%, 0.35);
   --glass-blur:     16px;
 
   /* ── Spacing ─────────────────────────────────── */
@@ -48,6 +48,30 @@
   --shadow-lg:  0 8px 32px hsla(0,0%,0%,.45);
   --shadow-glow: 0 0 30px hsla(250,90%,65%,.15);
 }
+
+[data-theme='light'] {
+  /* ── Palette (Clean Light) ───────────────────── */
+  --bg-primary:     hsl(220, 20%, 97%);
+  --bg-secondary:   hsl(0, 0%, 100%);
+  --bg-card:        hsl(0, 0%, 100%);
+  --bg-card-hover:  hsl(220, 20%, 94%);
+  --bg-input:       hsl(220, 20%, 94%);
+  --border:         hsl(220, 15%, 90%);
+  --border-light:   hsl(220, 15%, 85%);
+
+  --text-primary:   hsl(228, 25%, 15%);
+  --text-secondary: hsl(228, 15%, 45%);
+  --text-muted:     hsl(228, 10%, 65%);
+
+  --accent-bg:      hsl(250, 90%, 65%, 0.08);
+  --glass-bg:       hsla(0, 0%, 100%, 0.7);
+  --glass-border:   hsla(220, 15%, 90%, 0.5);
+
+  --shadow-sm:  0 1px 2px hsla(0,0%,0%,.05);
+  --shadow-md:  0 4px 12px hsla(228,25%,15%,.06);
+  --shadow-lg:  0 12px 24px hsla(228,25%,15%,.1);
+}
+
 
 /* ── Reset ──────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

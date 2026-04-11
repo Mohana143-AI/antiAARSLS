@@ -43,8 +43,10 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-card glass">
-        <h1>⚡ AARSLS</h1>
-        <p className="subtitle">Adaptive Academic Reputation & Skill Ledger System</p>
+        <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '2rem' }}>✨</span> Aura Ledger
+        </h1>
+        <p className="subtitle">Secure Academic Proof & Verified Reputation Ledger</p>
 
         {error && (
           <div style={{

@@ -12,10 +12,11 @@ def calculate_hamming_distance(hash1_hex: str, hash2_hex: str) -> int:
         return 0
 
     if len(h1) != len(h2):
-        # Different hash lengths, could be transition period data
-        return 256
+        # Mismatch - likely mixed data (16 vs 64 chars). Cannot compare.
+        return 999 
 
     # Convert hex to integer
+
     val1 = int(h1, 16)
     val2 = int(h2, 16)
 
