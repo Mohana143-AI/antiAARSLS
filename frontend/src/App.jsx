@@ -39,7 +39,7 @@ function ProtectedRoute({ children, allowedRoles }) {
 }
 
 function AppRoutes() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   return (
     <Routes>
