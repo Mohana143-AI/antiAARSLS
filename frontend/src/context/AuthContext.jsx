@@ -40,15 +40,36 @@ export function AuthProvider({ children }) {
 
     // Listen for Auth changes (including OAuth redirects)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" && session) {
+      console.log("DEBUG Auth Event:", event);
+      if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session) {
+        console.log("DEBUG Session found, syncing tokens...");
+        setLoading(true); // Lock the loading state while we fetch the profile
+        
         localStorage.setItem("access_token", session.access_token);
         localStorage.setItem("refresh_token", session.refresh_token);
-        const profile = await authAPI.me();
-        setUser(profile);
+        
+        try {
+          console.log("DEBUG Fetching profile from backend...");
+          const profile = await authAPI.me();
+          console.log("DEBUG Profile fetched:", profile);
+          setUser(profile);
+        } catch (err) {
+          console.error("DEBUG Profile fetch FAILED:", err.message);
+          // Only alert if it's not a common initialization error
+          if (!err.message.includes("401") && !err.message.includes("404")) {
+            alert("Connection Error: " + err.message);
+          }
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+        } finally {
+          setLoading(false); // Unlock the UI after fetch attempt
+        }
       } else if (event === "SIGNED_OUT") {
+        console.log("DEBUG User signed out");
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         setUser(null);
+        setLoading(false);
       }
     });
 

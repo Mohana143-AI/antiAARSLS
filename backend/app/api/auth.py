@@ -36,16 +36,42 @@ async def get_current_user(authorization: str = Header(...)):
         user = user_resp.user
         if not user:
             raise HTTPException(401, "Invalid token")
-        # Fetch profile
-        profile = (
+        
+        # 1. Fetch profile
+        profile_resp = (
             get_supabase_admin().table("profiles")
             .select("*")
             .eq("id", str(user.id))
-            .single()
             .execute()
         )
-        return profile.data
+        
+        # 2. If profile is missing (common with Google OAuth), Auto-Register
+        if not profile_resp.data:
+            print(f"DEBUG: Profile missing for {user.email}. Auto-creating...")
+            
+            # Use metadata for name if available
+            full_name = user.user_metadata.get("full_name") or user.email
+            
+            # Create profile
+            new_profile = (
+                get_supabase_admin().table("profiles").insert({
+                    "id": str(user.id),
+                    "email": user.email,
+                    "full_name": full_name,
+                    "role": "student",
+                }).execute()
+            )
+            
+            # Initialise reputation
+            get_supabase_admin().table("reputation_scores").insert({
+                "student_id": str(user.id),
+            }).execute()
+            
+            return new_profile.data[0]
+            
+        return profile_resp.data[0]
     except Exception as e:
+        print(f"DEBUG Auth Error: {e}")
         raise HTTPException(401, f"Authentication failed: {e}")
 
 

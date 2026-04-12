@@ -103,7 +103,9 @@ function AppRoutes() {
 
       {/* Root Redirection */}
       <Route path="/" element={
-        user ? (
+        loading ? (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", color: "var(--text-muted)" }}>Loading Aura Ledger...</div>
+        ) : user ? (
           <Navigate to={
             user.role === 'admin' ? '/admin' : 
             user.role === 'faculty' ? '/faculty' : 
