@@ -402,8 +402,31 @@ a:hover { text-decoration: underline; }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
-  .dashboard-layout { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .dashboard-layout {
+    grid-template-columns: 64px 1fr;
+  }
+  .sidebar { 
+    display: flex; 
+    padding: 16px 8px;
+    align-items: center;
+  }
+  .sidebar .logo {
+    justify-content: center;
+    padding: 0;
+    margin-bottom: 20px;
+  }
+  .sidebar .logo-text,
+  .sidebar .nav-label,
+  .sidebar .user-info .badge {
+    display: none;
+  }
+  .sidebar .nav-item {
+    justify-content: center;
+    padding: 12px;
+  }
+  .sidebar .nav-item span {
+    font-size: 1.4rem;
+  }
   .main-content { padding: 16px; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
 }

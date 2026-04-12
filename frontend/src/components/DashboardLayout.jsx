@@ -62,10 +62,10 @@ export default function DashboardLayout() {
     <div className="dashboard-layout">
       <aside className="sidebar">
         <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '1.5rem' }}>✨</span> Aura Ledger
+          <span style={{ fontSize: '1.5rem' }}>✨</span> <span className="logo-text">Aura Ledger</span>
         </div>
-        <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", padding: "0 8px", marginBottom: 8 }}>
-          {user.full_name}
+        <div className="user-info" style={{ fontSize: "0.8rem", color: "var(--text-muted)", padding: "0 8px", marginBottom: 8 }}>
+          <span className="nav-label">{user.full_name}</span>
           <span className="badge badge-accent" style={{ marginLeft: 8 }}>{user.role}</span>
         </div>
 
@@ -73,18 +73,18 @@ export default function DashboardLayout() {
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to} end
               className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
-              <span>{item.icon}</span> {item.label}
+              <span>{item.icon}</span> <span className="nav-label">{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
         <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
           <button className="nav-item" onClick={toggleTheme} style={{ background: "none", border: "none", width: "100%", justifyContent: "flex-start" }}>
-            <span>{theme === "dark" ? "☀️" : "🌙"}</span> {theme === "dark" ? "Light Mode" : "Dark Mode"}
+            <span>{theme === "dark" ? "☀️" : "🌙"}</span> <span className="nav-label">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
           </button>
           
-          <button className="btn btn-secondary" onClick={handleLogout} style={{ width: "100%" }}>
-            🚪 Sign Out
+          <button className="btn btn-secondary" onClick={handleLogout} style={{ width: "100%", padding: "10px" }}>
+            🚪 <span className="nav-label">Sign Out</span>
           </button>
         </div>
       </aside>
