@@ -163,6 +163,20 @@ async def update_me(body: ProfileUpdate, user=Depends(get_current_user)):
         raise HTTPException(400, str(e))
 
 
+@router.get("/my-activity")
+async def my_activity(user=Depends(get_current_user)):
+    """Fetch recent activity logs for the current user."""
+    res = (
+        get_supabase_admin().table("audit_logs")
+        .select("*")
+        .eq("user_id", user["id"])
+        .order("created_at", desc=True)
+        .limit(10)
+        .execute()
+    )
+    return res.data
+
+
 @router.get("/verify/{id}")
 async def public_verify(id: str):
     """Publicly verify a student's profile via QR code."""

@@ -14,6 +14,8 @@ export default function ProfilePage() {
     full_name: "",
     department: "",
   });
+  const [activities, setActivities] = useState([]);
+  const [loadingActivity, setLoadingActivity] = useState(false);
 
   // Ensure form is updated when user data loads
   useEffect(() => {
@@ -22,6 +24,15 @@ export default function ProfilePage() {
         full_name: user.full_name || "",
         department: user.department || "",
       });
+
+      // Fetch activity for non-students
+      if (user.role !== 'student') {
+        setLoadingActivity(true);
+        authAPI.getMyActivity()
+          .then(setActivities)
+          .catch(console.error)
+          .finally(() => setLoadingActivity(false));
+      }
     }
   }, [user, editing]); // Also reset on editing toggle if cancelled
 
@@ -138,14 +149,48 @@ export default function ProfilePage() {
             </p>
           </div>
         ) : (
-          <div className="card glass" style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", opacity: 0.8 }}>
-            <div style={{ fontSize: "3rem", marginBottom: 16 }}>💼</div>
-            <h2 style={{ fontSize: '1.2rem', marginBottom: 12 }}>Professional Access</h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", padding: "0 20px" }}>
-              As a <strong>{user.role}</strong>, you have access to specialized dashboards to verify and manage student credentials.
-            </p>
-            <div style={{ marginTop: 20 }}>
-              <span className="badge badge-accent">Verified {user.role}</span>
+          <div className="card glass" style={{ display: "flex", flexDirection: "column" }}>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: 20 }}>📜 Quick Activity Log</h2>
+            
+            {loadingActivity ? (
+              <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Loading activity...</p>
+            ) : activities.length > 0 ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {activities.map((act) => (
+                  <div key={act.id} style={{ 
+                    padding: "10px 14px", 
+                    background: "var(--bg-secondary)", 
+                    borderRadius: "var(--radius-md)",
+                    borderLeft: `4px solid ${
+                      act.action === 'INSERT' ? 'var(--success)' : 
+                      act.action === 'UPDATE' ? 'var(--info)' : 'var(--danger)'
+                    }`
+                  }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--accent-light)" }}>
+                        {act.action}
+                      </span>
+                      <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                        {new Date(act.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p style={{ fontSize: "0.8rem", margin: 0 }}>
+                      Modified <strong style={{ color: "var(--text-secondary)" }}>{act.table_name}</strong>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ textAlign: "center", padding: "40px 0", opacity: 0.7 }}>
+                <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>📋</div>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>No recent activity found.</p>
+              </div>
+            )}
+
+            <div style={{ marginTop: "auto", paddingTop: 24 }}>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.75rem", borderTop: "1px solid var(--border)", paddingTop: 16 }}>
+                As a <strong>{user.role}</strong>, your administrative actions are logged for audit purposes.
+              </p>
             </div>
           </div>
         )}

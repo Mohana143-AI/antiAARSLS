@@ -48,6 +48,7 @@ export const authAPI = {
   login: (data) => request("/auth/login", { method: "POST", body: JSON.stringify(data) }),
   me: () => request("/auth/me"),
   updateMe: (data) => request("/auth/me", { method: "PUT", body: JSON.stringify(data) }),
+  getMyActivity: () => request("/auth/my-activity"),
   publicVerify: (id) => request(`/auth/verify/${id}`),
 };
 
