@@ -21,6 +21,7 @@ export default function ProfilePage() {
   // Ensure form is updated when user data loads
   useEffect(() => {
     if (user) {
+      console.log("DEBUG: Initializing form for user:", user.email, "role:", user.role);
       setForm({
         full_name: user.full_name || "",
         department: user.department || "",
@@ -36,7 +37,7 @@ export default function ProfilePage() {
           .finally(() => setLoadingActivity(false));
       }
     }
-  }, [user, editing]); // Also reset on editing toggle if cancelled
+  }, [user]); // ONLY sync when the actual user data from server changes
 
   const verificationUrl = `${window.location.origin}/verify/${user?.id}`;
 
