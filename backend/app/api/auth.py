@@ -26,6 +26,7 @@ class LoginRequest(BaseModel):
 class ProfileUpdate(BaseModel):
     full_name: Optional[str] = None
     department: Optional[str] = None
+    role: Optional[str] = None
 
 
 # ── Dependency: get current user from access token ───────
@@ -148,6 +149,10 @@ async def update_me(body: ProfileUpdate, user=Depends(get_current_user)):
             update_data["full_name"] = body.full_name
         if body.department is not None:
             update_data["department"] = body.department
+        if body.role is not None:
+            if body.role not in ("student", "faculty", "admin", "recruiter"):
+                raise HTTPException(400, "Invalid role")
+            update_data["role"] = body.role
             
         if not update_data:
             return user

@@ -13,6 +13,7 @@ export default function ProfilePage() {
   const [form, setForm] = useState({
     full_name: "",
     department: "",
+    role: "student",
   });
   const [activities, setActivities] = useState([]);
   const [loadingActivity, setLoadingActivity] = useState(false);
@@ -23,6 +24,7 @@ export default function ProfilePage() {
       setForm({
         full_name: user.full_name || "",
         department: user.department || "",
+        role: user.role || "student",
       });
 
       // Fetch activity for non-students
@@ -111,7 +113,17 @@ export default function ProfilePage() {
 
             <div className="form-group">
               <label>System Role</label>
-              <span className="badge badge-accent">{user.role}</span>
+              {editing ? (
+                <select className="form-input" value={form.role} 
+                  onChange={(e) => setForm({...form, role: e.target.value})}>
+                  <option value="student">student</option>
+                  <option value="faculty">faculty</option>
+                  <option value="recruiter">recruiter</option>
+                  <option value="admin">admin</option>
+                </select>
+              ) : (
+                <span className="badge badge-accent">{user.role}</span>
+              )}
             </div>
 
             {editing && (
