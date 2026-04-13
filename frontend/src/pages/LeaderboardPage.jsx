@@ -16,8 +16,10 @@ export default function LeaderboardPage() {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-        {data.map((item, i) => {
-          const profile = item.profiles || {};
+        {data
+          .filter(item => (item.profiles?.role || 'student') === 'student')
+          .map((item, i) => {
+            const profile = item.profiles || {};
           const rank = i + 1;
           return (
             <div key={item.student_id} className="leaderboard-item"

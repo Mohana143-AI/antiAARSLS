@@ -178,6 +178,9 @@ async def public_verify(id: str):
         if not profile.data:
             raise HTTPException(404, "Profile not found")
 
+        if profile.data.get("role") != "student":
+            raise HTTPException(403, "Only student profiles can be publicly verified via QR.")
+
         # Fetch reputation score separately for 100% reliability
         reputation = (
             get_supabase_admin().table("reputation_scores")

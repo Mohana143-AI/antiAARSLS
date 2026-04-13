@@ -11,9 +11,19 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState("");
 
   const [form, setForm] = useState({
-    full_name: user?.full_name || "",
-    department: user?.department || "",
+    full_name: "",
+    department: "",
   });
+
+  // Ensure form is updated when user data loads
+  useEffect(() => {
+    if (user) {
+      setForm({
+        full_name: user.full_name || "",
+        department: user.department || "",
+      });
+    }
+  }, [user, editing]); // Also reset on editing toggle if cancelled
 
   const verificationUrl = `${window.location.origin}/verify/${user?.id}`;
 
@@ -101,31 +111,44 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Right: QR Verification */}
-        <div className="card glass" style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-          <h2 style={{ fontSize: '1.2rem', marginBottom: 12 }}>✨ Smart QR Identity</h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: 24, padding: "0 20px" }}>
-            Recruiters and Faculty can scan this code to verify your Aura Ledger profile and reputation instantly.
-          </p>
-          
-          <div style={{ 
-            background: "white", 
-            padding: 16, 
-            borderRadius: "var(--radius-lg)", 
-            boxShadow: "var(--shadow-lg)",
-            marginBottom: 20
-          }}>
-            <QRCodeSVG value={verificationUrl} size={180} />
-          </div>
+        {/* Right: QR Verification (Students only) */}
+        {user.role === 'student' ? (
+          <div className="card glass" style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: 12 }}>✨ Smart QR Identity</h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: 24, padding: "0 20px" }}>
+              Recruiters and Faculty can scan this code to verify your Aura Ledger profile and reputation instantly.
+            </p>
+            
+            <div style={{ 
+              background: "white", 
+              padding: 16, 
+              borderRadius: "var(--radius-lg)", 
+              boxShadow: "var(--shadow-lg)",
+              marginBottom: 20
+            }}>
+              <QRCodeSVG value={verificationUrl} size={180} />
+            </div>
 
-          <div className="badge badge-info" style={{ marginBottom: 16 }}>
-             Scan to Verify
+            <div className="badge badge-info" style={{ marginBottom: 16 }}>
+               Scan to Verify
+            </div>
+            
+            <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", wordBreak: "break-all" }}>
+              {verificationUrl}
+            </p>
           </div>
-          
-          <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", wordBreak: "break-all" }}>
-            {verificationUrl}
-          </p>
-        </div>
+        ) : (
+          <div className="card glass" style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", opacity: 0.8 }}>
+            <div style={{ fontSize: "3rem", marginBottom: 16 }}>💼</div>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: 12 }}>Professional Access</h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", padding: "0 20px" }}>
+              As a <strong>{user.role}</strong>, you have access to specialized dashboards to verify and manage student credentials.
+            </p>
+            <div style={{ marginTop: 20 }}>
+              <span className="badge badge-accent">Verified {user.role}</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

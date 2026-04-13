@@ -19,6 +19,7 @@ allowed_origins = [
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://maxiaarsls.vercel.app",
 ]
 env_origins = os.getenv("ALLOWED_ORIGINS")
 if env_origins:

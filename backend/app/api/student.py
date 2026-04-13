@@ -79,21 +79,17 @@ async def add_skill(body: SkillCreate, user=Depends(require_role("student"))):
             
             if dist == 0:
                 print(f"DEBUG: BLOCKED - Exact Plagiarism detected for Skill!")
-                raise HTTPException(400, "PLAGIARISM DETECTED: This proof image has already been submitted!")
-
-            
-            if level in ["high", "medium"]:
-                risk_level = level
-                risk_details = {"match_id": item["id"], "distance": dist, "reason": detail}
-                
-                # Penalize or track tampering
-                if level == "high":
+                # Increment plagiarism count even if blocked? 
+                # User wants count to increase, so we'll increment it before raising.
+                try:
                     get_supabase_admin().rpc("increment_reputation", {
                         "uid": user["id"],
-                        "points": 0, # Don't add points
-                        "field": "matches_detected"
+                        "amount": 1,
+                        "field": "matches_detected",
+                        "points": -50 # Penalty
                     }).execute()
-                break
+                except: pass
+                raise HTTPException(400, "PLAGIARISM DETECTED: This proof image has already been submitted!")
 
 
     try:
@@ -158,9 +154,16 @@ async def add_project(body: ProjectCreate, user=Depends(require_role("student"))
             
             if dist == 0:
                 print(f"DEBUG: BLOCKED - Exact Plagiarism detected for Project!")
+                try:
+                    get_supabase_admin().rpc("increment_reputation", {
+                        "uid": user["id"],
+                        "amount": 1,
+                        "field": "matches_detected",
+                        "points": -50 # Penalty
+                    }).execute()
+                except: pass
                 raise HTTPException(400, "PLAGIARISM DETECTED: This proof image has already been submitted for another project!")
 
-            
             if level in ["high", "medium"]:
                 risk_level = level
                 risk_details = {"match_id": item["id"], "distance": dist, "reason": detail}
@@ -222,9 +225,16 @@ async def add_certification(body: CertificationCreate, user=Depends(require_role
             
             if dist == 0:
                 print(f"DEBUG: BLOCKED - Exact Plagiarism detected for Cert!")
+                try:
+                    get_supabase_admin().rpc("increment_reputation", {
+                        "uid": user["id"],
+                        "amount": 1,
+                        "field": "matches_detected",
+                        "points": -50 # Penalty
+                    }).execute()
+                except: pass
                 raise HTTPException(400, "PLAGIARISM DETECTED: This certification image is already in our system!")
 
-            
             if level in ["high", "medium"]:
                 risk_level = level
                 risk_details = {"match_id": item["id"], "distance": dist, "reason": detail}
@@ -299,8 +309,9 @@ async def validate_peer_skill(body: ValidationCreate, user=Depends(require_role(
         # Update Recipient's Reputation Score
         get_supabase_admin().rpc("increment_reputation", {
             "uid": body.student_id,
-            "points": points,
-            "field": "validation_score"
+            "amount": points,
+            "field": "validation_score",
+            "points": points
         }).execute()
 
         # Check if the VALIDATOR themselves should now be promoted to Trusted Peer
@@ -331,7 +342,8 @@ async def get_validations_for_skill(skill_id: str, user=Depends(get_current_user
 async def leaderboard(user=Depends(get_current_user)):
     res = (
         get_supabase_admin().table("reputation_scores")
-        .select("*, profiles!student_id(full_name, department, avatar_url)")
+        .select("*, profiles!student_id!inner(full_name, department, avatar_url, role)")
+        .eq("profiles.role", "student")
         .order("total_score", desc=True)
         .limit(50)
         .execute()
