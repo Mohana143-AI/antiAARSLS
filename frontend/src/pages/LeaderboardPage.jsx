@@ -15,9 +15,6 @@ export default function LeaderboardPage() {
 
   return (
     <div className="page-container">
-      <div style={{ background: '#333', color: '#fff', padding: 10, borderRadius: 8, marginBottom: 20, fontSize: '0.8rem' }}>
-        DEBUG: Roles in data: {uniqueRoles.join(', ')} | Count: {data.length}
-      </div>
       <div className="page-header">
         <h1>🏆 Leaderboard</h1>
         <p>Top students ranked by automated reputation score</p>
@@ -42,9 +39,6 @@ export default function LeaderboardPage() {
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600 }}>
                   {profile.full_name || "Student"} 
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginLeft: 8 }}>
-                    ({profile.role || 'no-role'})
-                  </span>
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>{profile.department || ""}</div>
               </div>
