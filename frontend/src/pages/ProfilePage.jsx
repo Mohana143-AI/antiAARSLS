@@ -112,7 +112,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Right: QR Verification (Students only) */}
-        {user.role === 'student' ? (
+        {(user.role || '').toLowerCase().trim() === 'student' ? (
           <div className="card glass" style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
             <h2 style={{ fontSize: '1.2rem', marginBottom: 12 }}>✨ Smart QR Identity</h2>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: 24, padding: "0 20px" }}>
