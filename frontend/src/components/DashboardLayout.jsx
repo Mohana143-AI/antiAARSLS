@@ -1,36 +1,40 @@
 import { useState, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { 
+  LayoutDashboard, Target, Rocket, Award, Trophy, 
+  Bell, User, Settings, LogOut, Sun, Moon 
+} from "lucide-react";
 
 const navConfigs = {
   student: [
-    { to: "/dashboard", icon: "📊", label: "Dashboard" },
-    { to: "/dashboard/skills", icon: "🎯", label: "My Skills" },
-    { to: "/dashboard/projects", icon: "🚀", label: "My Projects" },
-    { to: "/dashboard/certifications", icon: "📜", label: "Certifications" },
-    { to: "/dashboard/leaderboard", icon: "🏆", label: "Leaderboard" },
-    { to: "/dashboard/notifications", icon: "🔔", label: "Notifications" },
-    { to: "/profile", icon: "👤", label: "Profile" },
-    { to: "/settings", icon: "⚙️", label: "Settings" },
+    { to: "/dashboard", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+    { to: "/dashboard/skills", icon: <Target size={18} />, label: "My Skills" },
+    { to: "/dashboard/projects", icon: <Rocket size={18} />, label: "My Projects" },
+    { to: "/dashboard/certifications", icon: <Award size={18} />, label: "Certifications" },
+    { to: "/dashboard/leaderboard", icon: <Trophy size={18} />, label: "Leaderboard" },
+    { to: "/dashboard/notifications", icon: <Bell size={18} />, label: "Notifications" },
+    { to: "/profile", icon: <User size={18} />, label: "Profile" },
+    { to: "/settings", icon: <Settings size={18} />, label: "Settings" },
   ],
   faculty: [
-    { to: "/faculty", icon: "📊", label: "Dashboard" },
-    { to: "/faculty/certifications", icon: "✅", label: "Cert Approvals" },
-    { to: "/faculty/students", icon: "👥", label: "Students" },
-    { to: "/profile", icon: "👤", label: "Profile" },
-    { to: "/settings", icon: "⚙️", label: "Settings" },
+    { to: "/faculty", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+    { to: "/faculty/certifications", icon: <Award size={18} />, label: "Cert Approvals" },
+    { to: "/faculty/students", icon: <Trophy size={18} />, label: "Students" },
+    { to: "/profile", icon: <User size={18} />, label: "Profile" },
+    { to: "/settings", icon: <Settings size={18} />, label: "Settings" },
   ],
   recruiter: [
-    { to: "/recruiter", icon: "🔍", label: "Search" },
-    { to: "/profile", icon: "👤", label: "Profile" },
-    { to: "/settings", icon: "⚙️", label: "Settings" },
+    { to: "/recruiter", icon: <Target size={18} />, label: "Search" },
+    { to: "/profile", icon: <User size={18} />, label: "Profile" },
+    { to: "/settings", icon: <Settings size={18} />, label: "Settings" },
   ],
   admin: [
-    { to: "/admin", icon: "📊", label: "Dashboard" },
-    { to: "/admin/users", icon: "👥", label: "Users" },
-    { to: "/admin/audit", icon: "📋", label: "Audit Logs" },
-    { to: "/profile", icon: "👤", label: "Profile" },
-    { to: "/settings", icon: "⚙️", label: "Settings" },
+    { to: "/admin", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+    { to: "/admin/users", icon: <Trophy size={18} />, label: "Users" },
+    { to: "/admin/audit", icon: <Award size={18} />, label: "Audit Logs" },
+    { to: "/profile", icon: <User size={18} />, label: "Profile" },
+    { to: "/settings", icon: <Settings size={18} />, label: "Settings" },
   ],
 };
 
@@ -80,11 +84,11 @@ export default function DashboardLayout() {
 
         <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
           <button className="nav-item" onClick={toggleTheme} style={{ background: "none", border: "none", width: "100%", justifyContent: "flex-start" }}>
-            <span>{theme === "dark" ? "☀️" : "🌙"}</span> <span className="nav-label">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+            <span>{theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}</span> <span className="nav-label">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
           </button>
           
-          <button className="btn btn-secondary" onClick={handleLogout} style={{ width: "100%", padding: "10px" }}>
-            🚪 <span className="nav-label">Sign Out</span>
+          <button className="btn btn-secondary" onClick={handleLogout} style={{ width: "100%", padding: "10px", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <LogOut size={18} /> <span className="nav-label">Sign Out</span>
           </button>
         </div>
       </aside>

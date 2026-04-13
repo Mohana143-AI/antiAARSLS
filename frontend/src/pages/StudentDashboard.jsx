@@ -5,6 +5,7 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from "recharts";
+import { Target, Rocket, Award, ShieldCheck, Clock, ShieldAlert } from "lucide-react";
 
 function ScoreGauge({ score, max = 100 }) {
   const pct = Math.min(score / max, 1);
@@ -122,22 +123,30 @@ export default function StudentDashboard() {
       {/* Quick Stats */}
       <div className="grid-4">
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: "var(--accent-bg)", color: "var(--accent)" }}>🎯</div>
+          <div className="stat-icon" style={{ background: "var(--accent-bg)", color: "var(--accent)" }}>
+            <Target size={20} />
+          </div>
           <div className="stat-value">{skills.length}</div>
           <div className="stat-label">Skills</div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: "var(--info-bg)", color: "var(--info)" }}>🚀</div>
+          <div className="stat-icon" style={{ background: "var(--info-bg)", color: "var(--info)" }}>
+            <Rocket size={20} />
+          </div>
           <div className="stat-value">{projects.length}</div>
           <div className="stat-label">Projects</div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: "var(--success-bg)", color: "var(--success)" }}>📜</div>
+          <div className="stat-icon" style={{ background: "var(--success-bg)", color: "var(--success)" }}>
+            <ShieldCheck size={20} />
+          </div>
           <div className="stat-value">{certs.filter(c => c.verification_status === "approved").length}</div>
           <div className="stat-label">Verified Certs</div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: "var(--warning-bg)", color: "var(--warning)" }}>⏳</div>
+          <div className="stat-icon" style={{ background: "var(--warning-bg)", color: "var(--warning)" }}>
+            <Clock size={20} />
+          </div>
           <div className="stat-value">{certs.filter(c => c.verification_status === "pending").length}</div>
           <div className="stat-label">Pending</div>
         </div>

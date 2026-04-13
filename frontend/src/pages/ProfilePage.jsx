@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
+import { User, Mail, Building, Briefcase, History, Sparkles, ShieldCheck, Info } from "lucide-react";
 
 export default function ProfilePage() {
   const { user, setUser } = useAuth();
@@ -21,7 +22,6 @@ export default function ProfilePage() {
   // Ensure form is updated when user data loads
   useEffect(() => {
     if (user) {
-      console.log("DEBUG: Initializing form for user:", user.email, "role:", user.role);
       setForm({
         full_name: user.full_name || "",
         department: user.department || "",
@@ -62,7 +62,7 @@ export default function ProfilePage() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>👤 My Profile</h1>
+        <h1><User style={{ verticalAlign: 'middle', marginRight: 10, marginTop: -4 }} /> My Profile</h1>
         <p>Manage your account details and verification identity.</p>
       </div>
 
@@ -138,7 +138,7 @@ export default function ProfilePage() {
         {/* Right: QR Verification (Students only) */}
         {(user.role || '').toLowerCase().trim() === 'student' ? (
           <div className="card glass" style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <h2 style={{ fontSize: '1.2rem', marginBottom: 12 }}>✨ Smart QR Identity</h2>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: 12 }}><Sparkles size={20} style={{ verticalAlign: 'middle', marginRight: 8 }} /> Smart QR Identity</h2>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: 24, padding: "0 20px" }}>
               Recruiters and Faculty can scan this code to verify your Aura Ledger profile and reputation instantly.
             </p>
@@ -163,7 +163,7 @@ export default function ProfilePage() {
           </div>
         ) : (
           <div className="card glass" style={{ display: "flex", flexDirection: "column" }}>
-            <h2 style={{ fontSize: '1.2rem', marginBottom: 20 }}>📜 Quick Activity Log</h2>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: 20 }}><History size={20} style={{ verticalAlign: 'middle', marginRight: 8 }} /> Quick Activity Log</h2>
             
             {loadingActivity ? (
               <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Loading activity...</p>
@@ -195,7 +195,7 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div style={{ textAlign: "center", padding: "40px 0", opacity: 0.7 }}>
-                <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>📋</div>
+                <div style={{ fontSize: "2.5rem", marginBottom: 12 }}><Info size={40} /></div>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>No recent activity found.</p>
               </div>
             )}

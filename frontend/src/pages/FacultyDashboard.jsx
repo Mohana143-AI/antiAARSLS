@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { facultyAPI } from "../lib/api";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Users, Target, Clock, CheckCircle } from "lucide-react";
 
 export default function FacultyDashboard() {
   const [analytics, setAnalytics] = useState(null);
@@ -45,10 +46,10 @@ export default function FacultyDashboard() {
       {/* Stats */}
       <div className="grid-4" style={{ marginBottom: 24 }}>
         {[
-          { icon: "👥", label: "Total Students", val: analytics?.total_students, bg: "var(--accent-bg)", color: "var(--accent)" },
-          { icon: "🎯", label: "Total Skills", val: analytics?.total_skills, bg: "var(--info-bg)", color: "var(--info)" },
-          { icon: "⏳", label: "Pending Certs", val: analytics?.pending_certifications, bg: "var(--warning-bg)", color: "var(--warning)" },
-          { icon: "✅", label: "Approved Certs", val: analytics?.approved_certifications, bg: "var(--success-bg)", color: "var(--success)" },
+          { icon: <Users size={20} />, label: "Total Students", val: analytics?.total_students, bg: "var(--accent-bg)", color: "var(--accent)" },
+          { icon: <Target size={20} />, label: "Total Skills", val: analytics?.total_skills, bg: "var(--info-bg)", color: "var(--info)" },
+          { icon: <Clock size={20} />, label: "Pending Certs", val: analytics?.pending_certifications, bg: "var(--warning-bg)", color: "var(--warning)" },
+          { icon: <CheckCircle size={20} />, label: "Approved Certs", val: analytics?.approved_certifications, bg: "var(--success-bg)", color: "var(--success)" },
         ].map(s => (
           <div key={s.label} className="stat-card">
             <div className="stat-icon" style={{ background: s.bg, color: s.color }}>{s.icon}</div>
