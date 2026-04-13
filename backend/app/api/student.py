@@ -342,7 +342,7 @@ async def get_validations_for_skill(skill_id: str, user=Depends(get_current_user
 async def leaderboard(user=Depends(get_current_user)):
     res = (
         get_supabase_admin().table("reputation_scores")
-        .select("*, profiles!student_id!inner(full_name, department, avatar_url, role)")
+        .select("total_score, skill_score, project_score, certification_score, validation_score, matches_detected, profiles!inner(full_name, department, avatar_url, role)")
         .eq("profiles.role", "student")
         .order("total_score", desc=True)
         .limit(50)
